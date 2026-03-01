@@ -695,21 +695,35 @@
   reveals.forEach(r => observer.observe(r));
 
   // Form submit
-  function submitForm() {
+  async function submitForm() {
     const nome = document.getElementById('nome').value;
     const email = document.getElementById('email').value;
     const empresa = document.getElementById('empresa').value;
+    const tamanho = document.getElementById('tamanho').value;
+    const desafio = document.getElementById('desafio').value;
 
     if (!nome || !email || !empresa) {
       alert('Preencha pelo menos nome, e-mail e empresa 😊');
       return;
     }
 
-    document.getElementById('form-content').style.display = 'none';
-    document.getElementById('success-msg').style.display = 'block';
+    const btn = document.querySelector('.btn-submit');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
 
-    // Aqui você vai integrar com Airtable, Notion, Mailchimp, etc.
-    console.log('Lead capturado:', { nome, email, empresa });
+    try {
+      await fetch('https://formspree.io/f/mgolbaoo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, empresa, tamanho, desafio })
+      });
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('success-msg').style.display = 'block';
+    } catch(e) {
+      btn.textContent = 'Garantir minha vaga no beta →';
+      btn.disabled = false;
+      alert('Erro ao enviar. Tente novamente!');
+    }
   }
 </script>
 
